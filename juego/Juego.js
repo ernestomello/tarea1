@@ -5,6 +5,6 @@ var JuegoSchema = new mongoose.Schema({
     user_winner: { type: mongoose.Schema.Types.ObjectId, 
         ref: 'User'}
 });
-mongoose.model('Juego', UserSchema);
 
+mongoose.model('Juego', UserSchema);
 module.exports = mongoose.model('Juego');

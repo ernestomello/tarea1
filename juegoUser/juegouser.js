@@ -7,6 +7,7 @@ var JuegoSchema = new mongoose.Schema({
         ref: 'User'},
     puntos:{type: Number, required: true}
 });
-mongoose.model('JuegoUser', UserSchema);
 
+
+mongoose.model('JuegoUser', UserSchema);
 module.exports = mongoose.model('JuegoUser');
