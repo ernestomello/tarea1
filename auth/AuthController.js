@@ -30,9 +30,9 @@ router.post('/register', async function(req, res) {
 	.then((user)=>{
 		// crear token
 		var token = jwt.sign({ id: user._id }, config.secret, {
-		expiresIn: 86400 // expira en 24 hours
+		expiresIn: 300 // expira en 24 hours= 86400
 		});
-		res.render('respuesta.ejs', {usuario: user});
+		res.render('index.ejs', {usuario: user});
 		//res.status(200).send({ auth: true, token: token })
 	});
 		
@@ -51,7 +51,7 @@ router.post('/login', async function(req, res) {
 		var passwordIsValid = bcrypt.compareSync(req.body.password,user.password);
 		if (!passwordIsValid) return res.render('index.ejs',{usuario: null});
 		var token = jwt.sign({ id: user._id }, config.secret, {
-			expiresIn: 86400 // expira en 24 hours
+			expiresIn: 300 // expira en 24 hours
 		});
 		res.render('index.ejs',{usuario: user});
 		//res.status(200).send({ auth: true, token: token });

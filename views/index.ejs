@@ -1,31 +1,77 @@
 <!DOCTYPE html>
 <html>
 <head>
-<style>
-ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  background-color: #333;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Node</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <script type="text/javascript" >
+  window.onload = function(){
+    const visorMensajes = document.getElementById('visor_mensajes');
+    const visorPuntaje = document.getElementById('visor_puntaje');
+    var formEnvio = document.getElementById('enviar');
+    var mensaje = document.getElementById('mensaje');
+    
+    const socket = io();
+    
+    let user = JSON.parse('<%- JSON.stringify(usuario)  %>');
+    if (user != undefined){
+      
+      let usuario = user.name;
+      console.log(user);
+      console.log(user.name);
+      //agregaMensaje(usuario);
 
-li {
-  float: left;
-}
+      
+      socket.emit('nuevo_conectado',usuario);
+      
+      socket.on('mensajes_externos', function (data) {
+          console.log(data);
+          agregaMensaje(data.user +' : '+ data.data);
+      });
+      socket.on('puntaje_juego', function (puntos) {
+          console.log(puntos);
+          agregaPuntaje(puntos);
+      });
+      socket.on('user_conectado', function (user) {
+          agregaMensaje( user + ' conectado!!!');
+      });
+      socket.on('user_desconectado', function (user) {
+          agregaMensaje( user + ' desconectado');
+      });
 
-li a {
-  display: block;
-  color: white;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-}
+      socket.on('user_escribiendo', function (user) {
+          agregaMensaje( user + ' escribiendo ...');
+      });
 
-li a:hover {
-  background-color: #111;
-}
-</style>
+        
+      formEnvio.addEventListener('click', function(e){
+          e.preventDefault();
+          agregaMensaje(user.name + ' : hizo clic' + mensaje.value);
+          socket.emit('envio_mensaje',mensaje.value );
+          socket.emit('sumo_clic',usuario );
+          mensaje.value = '';
+      })
+
+      function agregaMensaje(mensaje){
+          const elementoMensaje = document.createElement('div');
+          elementoMensaje.innerText = mensaje;
+          visorMensajes.append(elementoMensaje);
+      }
+      function agregaPuntaje(data){
+        console.log(data);
+        largo = data.users.length;
+        for (let i = 0; i < largo; i ++ ){
+          const elementoMensaje = document.createElement('div');
+          elementoMensaje.innerText = data.users[i] +':' +data.puntos[data.users[i]];
+          visorPuntaje.append(elementoMensaje);
+        }
+        
+      }
+    }
+  }
+  </script>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     
@@ -35,10 +81,18 @@ li a:hover {
       <li><a href="#news">Jugar</a></li>
       <li style="float:right"><a href="/">Salir</a></li>
     </ul>
-
+    
+    <h1>Bienvenido <%= usuario.name %></h1>
+    <div id="visor_mensajes">Visor Menasjes:</div>
+    <div id="visor_puntaje">Puntaje de la Partida:</div>
+    <form id="form_envio">
+      <input type="text" id="mensaje">
+      <button  id="enviar">Enviar</button>
+  </form>
     <% } else{ %>
     <ul>  
       <li style="float:right"><a href="users/login">Login</a></li>
+      <li style="float:right"><p>|</p></li>
       <li style="float:right"><a href="users/new">Registro</a></li>
     </ul>
     <% } %>
