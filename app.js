@@ -17,10 +17,13 @@ var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 console.log('conectado Mongo');
 global.__root   = __dirname + '/'; 
-
+var Juego = require('./juego/Juego');
+var JuegoUser = require('./juegoUser/juegouser');
+var User = require('./user/User');
 
 
 app.get('/', VerifyToken,function (req, res) {
+
   res.render('index.ejs',{usuario: null});
 });
 
@@ -55,10 +58,76 @@ io.sockets.on('connection', function (socket) {
     socket.broadcast.emit('mensajes_externos', {data: data, user: users[socket.id]});
   });
 
-  socket.on('sumo_clic',function (user) {
-    puntos[user] += 1;
-    socket.emit('puntaje_juego', {puntos : puntos , users : users });
+  socket.on('sumo_clic',function (data ) {
+    puntos[data.user] += parseInt(data.puntos);
+   
+    if (puntos[data.user] >= 10){
+      finalPartida(puntos,users, data.user)
+      //socket.broadcast.emit('mensajes_externos', {data: "Ganó la Partida", user: data.user});
+      io.sockets.emit('mensajes_externos', {data: "Ganó la Partida", user: data.user});
+    }
+    //socket.broadcast.emit('puntaje_juego', {puntos : puntos , users : users });
+    io.sockets.emit('puntaje_juego', {puntos : puntos , users : users });
+
   });
   
 });
+
+
+
+async function finalPartida(puntos,users,user){
+
+  await User.findOne({ name: user })
+	.catch((err, usuario) => {
+		if (err) return console.log(err);
+		if (!usuario) return console.log('No existe usuario.');
+	})
+	.then( async (usuario)=> {
+  const juego = new Juego ({
+		_id: new mongoose.Types.ObjectId(),
+		fecha : new Date(),
+		user_winner : usuario,
+		puntos : puntos[user]
+	});
+	await juego.save()
+	.catch((err)=>{
+		if (err) 
+      console.log(err);
+			//return res.status(500).send("Error")		
+	})
+	.then( async (juego)=>{
+    
+    largo = users.length;
+    
+    for (let i = 0; i < largo; i ++ ){   
+      
+      await User.findOne({ name: users[i] })
+      .catch((err, usuario) => {
+        if (err) return console.log(err);
+        if (!usuario) return console.log('No existe usuario.');
+      })
+      .then( async (usuario)=>{ 
+        const jugadas = new JuegoUser({
+          _id: new mongoose.Types.ObjectId(),
+          juego: juego,
+          user : usuario,
+          puntos : puntos[users[i]]
+        });
+        await jugadas.save()
+        .catch((err)=>{
+          if (err) 
+            console.log(err);
+            //return res.status(500).send("Error")      
+        })
+        .then((jugadas)=>{
+          console.log("termino");
+          //res.render('index.ejs', {usuario: user});
+          });
+      })
+    };
+		//res.status(200).send({ auth: true, token: token })
+	  });
+  
+  })
+}
 module.exports = app;

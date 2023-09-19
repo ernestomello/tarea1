@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');  
-var JuegoSchema = new mongoose.Schema({  
+var JuegoUserSchema = new mongoose.Schema({  
     _id: mongoose.Schema.Types.ObjectId,
     juego: { type: mongoose.Schema.Types.ObjectId, 
         ref: 'Juego'},
@@ -9,5 +9,5 @@ var JuegoSchema = new mongoose.Schema({
 });
 
 
-mongoose.model('JuegoUser', UserSchema);
+mongoose.model('JuegoUser', JuegoUserSchema);
 module.exports = mongoose.model('JuegoUser');
