@@ -40,8 +40,8 @@
           agregaMensaje( user + ' desconectado');
       });
 
-      socket.on('user_escribiendo', function (user) {
-          agregaMensaje( user + ' escribiendo ...');
+      socket.on('user_ganador', function (user) {
+          alert('Fin del Juego');
       });
 
       for (let i= 0; i < imagenes.length; i++){
@@ -71,17 +71,58 @@
         }
         
       }
+     
+
+    }
+    var modal = document.getElementById("myModal");
+    var modal2 = document.getElementById("myModal2");
+    var btn = document.getElementById("myBtn");
+    var btn2 = document.getElementById("myBtn2");
+
+    var modal_content = document.getElementById("modal-content");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+    var span2 = document.getElementsByClassName("close")[1];
+
+    // When the user clicks the button, open the modal 
+    btn.onclick = function() {
+      modal.style.display = "block";
+    }
+    btn2.onclick = function() {
+      const elementoMensaje = document.createElement('div');
+      elementoMensaje.innerText = " que aparece";
+      modal_content.append(elementoMensaje);
+      modal2.style.display = "block";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+      modal.style.display = "none";
+      
+    }
+    span2.onclick = function() {
+      modal2.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+        modal2.style.display = "none";
+      }
     }
   }
+  
   </script>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     
     <% if(usuario ){ %>
-    <ul>  
-      <li><a href="#home">Reglas</a></li>
-      <li><a href="#news">Jugar</a></li>
+    <ul class="ul">  
+      <li><a id="myBtn" >Reglas</a></li>
+      <li><a id="myBtn2">Estadisticas</a></li>
       <li style="float:right"><a href="/">Salir</a></li>
     </ul>
     
@@ -153,11 +194,44 @@
         </div>
       </div>
     </div>
-     
-      
+    <div id="myModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <p>
+          <b>Reglas del Juego</b><br>
+          <ul>
+            <li>Consigna</li><br>
+              <ul>
+                <li>El que haga mas puntos gana el juego</li><br>
+                <li>Los personajes tienen puntos según hayan seguido los fundamentos del movimiento Hippie</li><br>
+                <li>Alguno de ellos a aportado para que la filosofía Hippie perdure en el tiempo</li><br>
+                <li>Otros han hecho todo lo contrario y otros no han influido para nada.</li><br>
+              </ul>
+            <li>Antes de empezar:</li><br>
+              <ul>
+                <li>Para conocerlos pasa sobre ellos y enterate quienes son .</li><br>
+              </ul>
+            <li>Como hacer puntos</li><br>
+              <ul>
+                <li>Hay que hacer clic sobre los personajes para sumar/restar puntos.</li><br>
+              </ul>
+            
+            
+            
+            <li>Que te diviertas.</li><br>
+          </ul>
+        </p>
+      </div>
+    </div>
+    <div id="myModal2" class="modal">
+      <div id="modal-content" class="modal-content">        
+        <span class="close">&times;</span>
+        <p>Otro modal</p>
+      </div>
+    </div>
   
     <% } else{ %>
-    <ul>  
+    <ul class="ul">  
       <li style="float:right"><a href="users/login">Login</a></li>
       <li style="float:right"><p>|</p></li>
       <li style="float:right"><a href="users/new">Registro</a></li>
@@ -166,7 +240,7 @@
 
 <footer>
   <div>
-    <p>Author: Ernesto Mello</p>
+    <p>Autor: Ernesto Mello</p>
   </div>
   <div>
     <img id="tecno" src="/images/TI-logo-CMYK.png" alt="tecnologo">
@@ -178,4 +252,7 @@
 </footer>
 
 </body>
+<script>
+  
+</script>
 </html>

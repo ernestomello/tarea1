@@ -120,6 +120,8 @@ async function finalPartida(puntos,users,user){
             //return res.status(500).send("Error")      
         })
         .then((jugadas)=>{
+          io.sockets.emit('user_ganador','fin del Juego');
+          cierroJuego();
           console.log("termino");
           //res.render('index.ejs', {usuario: user});
           });
@@ -129,5 +131,12 @@ async function finalPartida(puntos,users,user){
 	  });
   
   })
+}
+function cierroJuego(){
+  let largo = users.length
+  for (let i = 0; i < largo; i ++ ){   
+    puntos[users[i]] = 0;
+  }
+  io.sockets.emit('puntaje_juego', {puntos : puntos , users : users });
 }
 module.exports = app;

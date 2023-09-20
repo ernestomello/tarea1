@@ -28,12 +28,11 @@ router.post('/register', async function(req, res) {
 		
 	})
 	.then((user)=>{
-		// crear token
 		var token = jwt.sign({ id: user._id }, config.secret, {
 		expiresIn: 300 // expira en 24 hours= 86400
 		});
 		res.render('index.ejs', {usuario: user});
-		//res.status(200).send({ auth: true, token: token })
+		
 	});
 		
 });
@@ -53,9 +52,8 @@ router.post('/login', async function(req, res) {
 		var token = jwt.sign({ id: user._id }, config.secret, {
 			expiresIn: 300 // expira en 24 hours
 		});
-		//res.redirect('/');
 		res.render('index.ejs',{usuario: user});
-		//res.status(200).send({ auth: true, token: token });
+		
 	});
 });
 
